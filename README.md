@@ -3,6 +3,24 @@
 [![Video](https://img.shields.io/badge/Watch%20Video-Click%20Here-blue)](https://www.youtube.com/watch?v=-SPN-HxDsJk&t=85s)
 [![Paper](https://img.shields.io/badge/Read%20Paper-Click%20Here-green)](https://openaccess.thecvf.com/content/CVPR2024/papers/Zhou_BlockGCN_Redefine_Topology_Awareness_for_Skeleton-Based_Action_Recognition_CVPR_2024_paper.pdf)
 
+---
+
+> ## 🪟 Windows-Adapted Fork
+>
+> 本仓库基于 [BlockGCN 官方版](https://github.com/ZhouYuxuanYX/BlockGCN) 修改，**已在 Windows + 单卡 GPU 环境下跑通**。
+>
+> - **改动详情**：见 [CHANGES.md](./CHANGES.md) —— 列出与官方版的每处代码差异、改动原因，以及仍可优化的方向
+> - **训练复现结果**：见 [TRAIN_ANALYSIS.md](./TRAIN_ANALYSIS.md) —— NTU60-CS joint 流，140 epoch，**Top-1 = 91.07%**（超过官方报告 ~0.3 pp）
+>
+> 主要适配点（详见 CHANGES.md）：
+> - `resource` 模块容错（Windows 没有这个标准库）
+> - `DataLoader` 在 `num_worker=0` 下兼容 `prefetch_factor`
+> - 单卡场景去掉硬编码的 `self.model.module.*`
+> - `model/BlockGCN.py` 的 `TopoTrans` 通过 `num_person` 参数自动兼容 NTU（双人）/ UCLA（单人）
+> - 张量 device 一致性修复
+>
+> ---
+
 ## Performance vs. Model Size on NTU RGB+D 120 Cross-Subject Benchmark
 <p align="center">
    <img src="fig1.png" alt="drawing" width="450"/>

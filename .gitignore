@@ -1,0 +1,138 @@
+# ============================================================
+# Python
+# ============================================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Distribution / packaging
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Jupyter / IPython
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# pyenv / virtualenv
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Pytest / coverage / mypy
+.pytest_cache/
+.cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pytype/
+
+# ============================================================
+# IDE & editor
+# ============================================================
+.vscode/
+.idea/
+*.iml
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+*.code-workspace
+
+# ============================================================
+# Claude / AI tooling
+# ============================================================
+.claude/
+.cursor/
+.aider*
+
+# ============================================================
+# Data — too large for GitHub (rebuild via scripts/)
+# ============================================================
+# NTU60 / NTU120 raw + processed
+data/ntu/
+data/ntu60/
+data/ntu120/
+data/nturgbd_raw/
+
+# NW-UCLA dataset
+data/NW-UCLA/all_sqe/
+data/NW-UCLA/*.pkl
+!data/NW-UCLA/.gitkeep
+
+# Generic large data extensions
+*.npz
+*.npy
+*.h5
+*.hdf5
+*.mat
+*.skeleton
+
+# ============================================================
+# Training outputs
+# ============================================================
+work_dir/
+runs/
+events.out.tfevents.*
+
+# Model weights / checkpoints
+*.pt
+*.pth
+*.ckpt
+*.bin
+*.safetensors
+*.tar
+
+# Score files / per-class CSVs / sample lists
+*.pkl
+epoch*_test_score.pkl
+epoch*_test_each_class_acc.csv
+runs-*-*_right.txt
+runs-*-*_wrong.txt
+
+# ============================================================
+# Logs
+# ============================================================
+*.log
+log.txt
+nohup.out
+
+# ============================================================
+# Temporary / scratch
+# ============================================================
+*.tmp
+*.bak
+*.orig
+*.rej
+main copy.py
+main_copy.py
+
+# ============================================================
+# OS junk
+# ============================================================
+.Trashes
+ehthumbs.db
+desktop.ini

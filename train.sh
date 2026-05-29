@@ -1,6 +1,6 @@
 ##!/bin/bash
 
-#python main.py --config config/nturgbd-cross-subject/default.yaml --model model.BlockGCN.Model --work-dir work_dir/ntu60/csub/BlockGCN_decay_110_120_140_epochs_new_8heads_deterministic --device 0 1
+python main.py --config config/nturgbd-cross-subject/default.yaml --model model.BlockGCN.Model --work-dir work_dir/ntu60/csub/140_epochs --device 0
 ##
 #python main.py --config config/nturgbd-cross-subject/vel.yaml --model model.BlockGCN.Model --work-dir work_dir/ntu60/csub/BlockGCN_decay_110_120_140_epochs_vel_new_8heads_deterministic --device 2 3
 ##
@@ -37,7 +37,9 @@
 #python main.py --config config/nturgbd120-cross-set/bone_vel.yaml --model model.BlockGCN.Model --work-dir work_dir/ntu120/cset/BlockGCN_decay_110_120_140_epochs_bone_vel_new_8heads_deterministic --device 6 7
 
 
-python main.py --config config/ucla/default.yaml --model model.BlockGCN.Model --work-dir work_dir/ucla/BlockGCN_decay_110_120_140_epochs_new_8heads_deterministic --device 0 1
+python main.py --config config/ucla/default.yaml --model model.BlockGCN.Model --work-dir work_dir/ucla/BlockGCN_decay_110_120_140_epochs_new_8heads_deterministic --device 0
+
+
 #
 #python main.py --config config/ucla/vel.yaml --model model.BlockGCN.Model --work-dir work_dir/ucla/BlockGCN_decay_110_120_140_epochs_vel_new_8heads_deterministic --device 2 3
 #

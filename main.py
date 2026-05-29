@@ -1,5 +1,9 @@
 #!/usr/bin/env python
+
 from __future__ import print_function
+import warnings
+warnings.filterwarnings("ignore", category=DeprecationWarning)
+warnings.filterwarnings("ignore", category=UserWarning)
 import argparse
 import inspect
 import os
@@ -24,10 +28,13 @@ from tensorboardX import SummaryWriter
 from tqdm import tqdm
 # from cosine_lr_schedueler import CosineLRScheduler
 from torchlight import DictAction
-import resource
+try:
+    import resource
+except ImportError:
+    resource = None
 import copy
 # from torch import linalg as LA
-
+# device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 sys.path.insert(0, "~/anaconda3/envs/diffusion/lib/python3.8/site-packages/click")
 
 "https://github.com/ajbrock/BigGAN-PyTorch/blob/master/utils.py"
@@ -46,8 +53,10 @@ def ema_update(source, target, decay=0.99, start_itr=20, itr=None):
             # print(key)
 
 
-rlimit = resource.getrlimit(resource.RLIMIT_NOFILE)
-resource.setrlimit(resource.RLIMIT_NOFILE, (2048, rlimit[1]))
+rlimit = None
+if resource is not None:
+    rlimit = resource.getrlimit(resource.RLIMIT_NOFILE)
+    resource.setrlimit(resource.RLIMIT_NOFILE, (2048, rlimit[1]))
 
 def init_seed(seed):
     torch.cuda.manual_seed_all(seed)
@@ -171,7 +180,7 @@ def get_parser():
     parser.add_argument(
         '--num-worker',
         type=int,
-        default=16,
+        default=0,
         help='the number of worker for data loader')
     parser.add_argument(
         '--train-feeder-args',
@@ -310,23 +319,28 @@ class Processor():
     def load_data(self):
         Feeder = import_class(self.arg.feeder)
         self.data_loader = dict()
+        loader_args = dict(
+            num_workers=self.arg.num_worker,
+            worker_init_fn=init_seed)
+        if self.arg.num_worker > 0:
+            loader_args['prefetch_factor'] = 2
         if self.arg.phase == 'train':
             self.data_loader['train'] = torch.utils.data.DataLoader(
                 dataset=Feeder(**self.arg.train_feeder_args),
                 batch_size=self.arg.batch_size,
                 shuffle=True,
                 pin_memory=True,
-                prefetch_factor=16,
-                num_workers=self.arg.num_worker,
                 drop_last=True,
-                worker_init_fn=init_seed)
+                **loader_args)
         self.data_loader['test'] = torch.utils.data.DataLoader(
             dataset=Feeder(**self.arg.test_feeder_args),
             batch_size=self.arg.test_batch_size,
             shuffle=False,
-            num_workers=self.arg.num_worker,
             drop_last=False,
-            worker_init_fn=init_seed)
+            **loader_args)
+
+    def unwrap_model(self):
+        return self.model.module if hasattr(self.model, 'module') else self.model
 
     def load_model(self):
         output_device = self.arg.device[0] if type(self.arg.device) is list else self.arg.device
@@ -475,6 +489,9 @@ class Processor():
 
         soft_label_emma = 0
         for batch_idx, (joint, data, label, index) in enumerate(process):
+            data = data.to(self.output_device)
+            # label = label.to(self.output_device)
+            joint = joint.to(self.output_device)
             self.global_step += 1
             with torch.no_grad():
                 data = data.float().cuda(self.output_device)
@@ -500,9 +517,11 @@ class Processor():
 
             with torch.cuda.amp.autocast(enabled=use_amp):
 
-                output, z = self.model(data, F.one_hot(label, num_classes=self.model.module.num_class), joint)
-                # output, z = self.model(data, F.one_hot(label, num_classes=self.model.num_class), joint)
-
+                # output, z = self.model(data, F.one_hot(label, num_classes=self.unwrap_model().num_class), joint)
+                output, z = self.model(data, F.one_hot(label, num_classes=self.model.num_class), joint)
+                # 关键：把 joint 也送到 GPU
+                # output, z = self.model(data.to(self.output_device),F.one_hot(label, num_classes=self.model.num_class).to(self.output_device),joint.to(self.output_device))
+                # output, z = self.model(data.to(self.output_device),F.one_hot(label, num_classes=self.model.num_class).to(self.output_device),joint.to(self.output_device))
                 ## for mmd loss
                 # output, y, z = self.model(data, F.one_hot(label, num_classes=self.model.module.num_class))
                 # mmd_loss, l2_z_mean, z_mean = get_mmd_loss(z, self.model.module.z_prior, label, self.model.module.num_class)
@@ -578,6 +597,10 @@ class Processor():
             step = 0
             process = tqdm(self.data_loader[ln], ncols=40)
             for batch_idx, (joint, data, label, index) in enumerate(process):
+
+                data = data.to(self.output_device)
+                # label = label.to(self.output_device)
+                joint = joint.to(self.output_device)
                 label_list.append(label)
                 if arg.ema:
                     label_list_ema.append(label)
@@ -585,16 +608,15 @@ class Processor():
                     data = data.float().cuda(self.output_device)
                     label = label.long().cuda(self.output_device)
                     # for mmd
-                    output, y = self.model(data, F.one_hot(label, num_classes=self.model.module.num_class), joint)
-                    # output, y = self.model(data, F.one_hot(label, num_classes=self.model.num_class))
+                    # output, y = self.model(data, F.one_hot(label, num_classes=self.unwrap_model().num_class), joint)
+                    output, y = self.model(data, F.one_hot(label, num_classes=self.model.num_class), joint.to(self.output_device))
 
 
 
                     if arg.ema:
                         self.model_ema.cuda(self.output_device)
-                        output_ema, z_ema = self.model_ema(data, F.one_hot(label, num_classes=self.model.module.num_class))
-                        # output_ema, z_ema = self.model_ema(data,
-                        #                                    F.one_hot(label, num_classes=self.model.num_class))
+                        # output_ema, z_ema = self.model_ema(data, F.one_hot(label, num_classes=self.unwrap_model().num_class))
+                        output_ema, z_ema = self.model_ema(data, F.one_hot(label, num_classes=self.model.num_class))
                     loss = self.loss(output, label)
                     if arg.ema:
                         loss_ema = self.loss(output_ema, label)
@@ -782,7 +804,7 @@ if __name__ == '__main__':
     p = parser.parse_args()
     if p.config is not None:
         with open(p.config, 'r') as f:
-            default_arg = yaml.load(f)
+            default_arg = yaml.load(f, Loader=yaml.FullLoader)
         key = vars(p).keys()
         for k in default_arg.keys():
             if k not in key:
