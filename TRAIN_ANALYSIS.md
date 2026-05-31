@@ -1,7 +1,7 @@
 # 训练结果分析：`work_dir/ntu60/csub/140_epochs`
 
 > 命令：`python main.py --config config/nturgbd-cross-subject/default.yaml --model model.BlockGCN.Model --work-dir work_dir/ntu60/csub/140_epochs --device 0`
->
+>****
 > 数据集：NTU60 Cross-Subject（60 类、25 关节、2 人、骨架 / joint 模态）
 > 模型参数量：**1,372,780（≈1.37 M）**
 
