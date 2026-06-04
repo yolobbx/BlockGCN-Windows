@@ -2,7 +2,7 @@
 
 > 复现仓库：`BlockGCN-Windows`（基于 [BlockGCN-main 官方版](https://github.com/ZhouYuxuanYX/BlockGCN) 适配 Windows + 单 GPU）
 > 论文：**BlockGCN: Redefine Topology Awareness for Skeleton-Based Action Recognition** (CVPR 2024)
-> 论文位置：[`BlockGCN_CVPR24/paper.pdf`](BlockGCN_CVPR24/paper.pdf) / [`paper.md`](BlockGCN_CVPR24/paper.md)
+> 论文位置：[`BlockGCN_CVPR24/paper.pdf`](../BlockGCN_CVPR24/paper.pdf) / [`paper.md`](../BlockGCN_CVPR24/paper.md)
 
 文档结构（建议 PPT 一节对应一章）：
 

@@ -9,8 +9,8 @@
 >
 > 本仓库基于 [BlockGCN 官方版](https://github.com/ZhouYuxuanYX/BlockGCN) 修改，**已在 Windows + 单卡 GPU 环境下跑通**。
 >
-> - **改动详情**：见 [CHANGES.md](./CHANGES.md) —— 列出与官方版的每处代码差异、改动原因，以及仍可优化的方向
-> - **训练复现结果**：见 [TRAIN_ANALYSIS.md](./TRAIN_ANALYSIS.md) —— NTU60-CS joint 流，140 epoch，**Top-1 = 91.07%**（超过官方报告 ~0.3 pp）
+> - **改动详情**：见 [CHANGES.md](./md/CHANGES.md) —— 列出与官方版的每处代码差异、改动原因，以及仍可优化的方向
+> - **训练复现结果**：见 [TRAIN_ANALYSIS.md](./md/TRAIN_ANALYSIS.md) —— NTU60-CS joint 流，140 epoch，**Top-1 = 91.07%**（超过官方报告 ~0.3 pp）
 >
 > 主要适配点（详见 CHANGES.md）：
 > - `resource` 模块容错（Windows 没有这个标准库）
@@ -23,7 +23,7 @@
 
 ## Performance vs. Model Size on NTU RGB+D 120 Cross-Subject Benchmark
 <p align="center">
-   <img src="fig1.png" alt="drawing" width="450"/>
+   <img src="png/fig1.png" alt="drawing" width="450"/>
 </p>
 <p align="center">
    <b>Figure 1:</b> This graph demonstrates the superior performance of BlockGCN compared to existing methods on the NTU RGB+D 120 Cross-Subject Benchmark. BlockGCN achieves higher accuracy with fewer parameters, indicating its efficiency and effectiveness.
@@ -31,7 +31,7 @@
 
 ## Illustration of BlockGC 
 <p align="center">
-   <img src="blockgc.png" alt="drawing" width="900"/>
+   <img src="png/blockgc.png" alt="drawing" width="900"/>
 </p>
 <p align="center">
    <b>Figure 2:</b> An illustration of the BlockGC structure within BlockGCN. BlockGC divides the feature dimension into multiple groups, applying spatial aggregation and feature projection in parallel to efficiently model high-level semantics.
