@@ -519,6 +519,7 @@ class Processor():
 
                 # output, z = self.model(data, F.one_hot(label, num_classes=self.unwrap_model().num_class), joint)
                 output, z = self.model(data, F.one_hot(label, num_classes=self.model.num_class), joint)
+                # output, z = self.model(data, F.one_hot(label, num_classes=self.model.module.num_class), joint)
                 # 关键：把 joint 也送到 GPU
                 # output, z = self.model(data.to(self.output_device),F.one_hot(label, num_classes=self.model.num_class).to(self.output_device),joint.to(self.output_device))
                 # output, z = self.model(data.to(self.output_device),F.one_hot(label, num_classes=self.model.num_class).to(self.output_device),joint.to(self.output_device))
